@@ -20,9 +20,12 @@ fn handle_signal(data: &Data, pf: &PlayerFinder) {
   }
 }
 
+//todo: load different config giles depending on CLI argument
+//so i can specify 3 files to use with my polybar config
+
 fn main() {
-     dotenvy::dotenv().expect("Failed to read .env file");
-    std::env::set_var("RUST_LOG", "debug");
+    //dotenvy::dotenv().expect("Failed to read .env file");
+    std::env::set_var("RUST_LOG", "error");
     if let Err(e) = env_logger::init() {
       panic!("{}", e);
     }

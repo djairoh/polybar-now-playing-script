@@ -12,7 +12,6 @@ fn cutoff(fields: &Vec<Field>, brk: char, strings: &mut HashMap<String, String>)
         let mut b = a.unwrap().clone();
         b.truncate(field.num_chars as usize);
         b.push(brk);
-        println!("{}", b);
         strings.insert(field.field.clone(), b);
       }
     }
