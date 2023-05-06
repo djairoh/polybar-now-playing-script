@@ -1,7 +1,9 @@
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread::{self};
+use clap::Parser;
 use mpris::PlayerFinder;
+use structs::cli::Cli;
 use structs::{config::Config, data::Data};
 use crate::update_players::update_players;
 use crate::update_message::update_message;
@@ -20,9 +22,6 @@ fn handle_signal(data: &Data, pf: &PlayerFinder) {
   }
 }
 
-//todo: load different config giles depending on CLI argument
-//so i can specify 3 files to use with my polybar config
-
 fn main() {
     //dotenvy::dotenv().expect("Failed to read .env file");
     std::env::set_var("RUST_LOG", "error");
@@ -30,7 +29,8 @@ fn main() {
       panic!("{}", e);
     }
 
-    let mut cfg: Config = confy::load("polybar-now-playing", None).unwrap(); //TODO: error handling
+    let cli = Cli::parse();
+    let mut cfg: Config = confy::load("polybar-now-playing", cli.config_file.as_str()).unwrap(); //TODO: error handling
     cfg.priorities_to_lower();
     let mut data: Data = Data::default();
     let term = Arc::new(AtomicBool::new(false));

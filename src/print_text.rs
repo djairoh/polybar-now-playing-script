@@ -25,7 +25,9 @@ fn build_string(cfg: &Config, data: &mut Data) -> String {
     b.append(' ');
   } else {
     cutoff(&cfg.metadata_fields, cfg.break_character, &mut data.display_text);
-    b.append(data.display_prefix.clone());
+    if cfg.render_prefix {
+      b.append(data.display_prefix.clone());
+    }
     b.append(' ');
     b.append(format!(" %{{T{}}}", cfg.font_index));
     let mut idx = 0; let len = cfg.metadata_fields.len() as i32;

@@ -21,6 +21,16 @@ impl Field {
   }
 }
 
+// I shouldn't need this; remove when done with testing FIXME
+impl Default for Field {
+    fn default() -> Self {
+        Self { 
+          field: Default::default(), 
+          num_chars: Default::default() 
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct Rating {
   pub nil: char,
@@ -49,15 +59,16 @@ impl Default for Rating {
 #[derive(Serialize, Deserialize)]
 pub struct Config {
   pub font_index: u8,
-  pub update_delay: Duration,
   pub metadata_separator: char,
   pub array_separator: char,
   pub hide_output: bool,
+  pub render_prefix: bool,
+  pub break_character: char,
+  pub player_priorities: Vec<String>,  
+  pub rating_icons: Rating,
   pub metadata_fields: Vec<Field>,
   pub player_prefixes: HashMap<String, char>,
-  pub rating_icons: Rating,
-  pub player_priorities: Vec<String>,
-  pub break_character: char,
+  pub update_delay: Duration,
 }
 
 impl Default for Config {
@@ -68,11 +79,12 @@ impl Default for Config {
         metadata_separator: '|',
         array_separator: '+',
         hide_output: true,
+        render_prefix: true,
         metadata_fields: vec![Field::constructor("xesam:title", 40), Field::constructor("xesam:artist", 20)],
-        player_prefixes: default_player_prefixes(),
         rating_icons: Rating::default(),
         player_priorities: vec![ms("clementine"), ms("spotify"), ms("deadbeef"), ms("mpv"), ms("vlc"), ms("firefox"), ms("chromium")],
         break_character: '-',
+        player_prefixes: default_player_prefixes(),
       }
   }
 }
