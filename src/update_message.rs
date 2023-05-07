@@ -43,27 +43,28 @@ fn value_to_string(v: &MetadataValue, sep: char) -> String {
   }
 }
 
-fn rating_to_string(r: Option<&MetadataValue>, map: &Rating) -> String {
+fn rating_to_string(r: Option<&MetadataValue>, map: &Rating) -> Option<String> {
   match r {
     Some(rating) => {
       let f = (rating.as_f64().unwrap() * 10_f64).round() as i64;
       match f { //todo: refactor
-        0 => Rating::repeat(map.nil, 5),
-        1 => format!("{}{}", Rating::repeat(map.half, 1), Rating::repeat(map.nil, 4)),
-        2 => format!("{}{}", Rating::repeat(map.full, 1), Rating::repeat(map.nil, 4)),
-        3 => format!("{}{}{}", Rating::repeat(map.full, 1), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 3)),
-        4 => format!("{}{}", Rating::repeat(map.full, 2), Rating::repeat(map.nil, 3)),
-        5 => format!("{}{}{}", Rating::repeat(map.full, 2), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 2)),
-        6 => format!("{}{}", Rating::repeat(map.full, 3), Rating::repeat(map.nil, 2)),
-        7 => format!("{}{}{}", Rating::repeat(map.full, 3), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 1)),
-        8 => format!("{}{}", Rating::repeat(map.full, 4), Rating::repeat(map.nil, 1)),
-        9 => format!("{}{}", Rating::repeat(map.full, 4), Rating::repeat(map.half, 1)),
-        10.. => Rating::repeat(map.full, 5),
-        _ =>  format!("Invalid rating!")
+        0 => Some(Rating::repeat(map.nil, 5)),
+        1 => Some(format!("{}{}", Rating::repeat(map.half, 1), Rating::repeat(map.nil, 4))),
+        2 => Some(format!("{}{}", Rating::repeat(map.full, 1), Rating::repeat(map.nil, 4))),
+        3 => Some(format!("{}{}{}", Rating::repeat(map.full, 1), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 3))),
+        4 => Some(format!("{}{}", Rating::repeat(map.full, 2), Rating::repeat(map.nil, 3))),
+        5 => Some(format!("{}{}{}", Rating::repeat(map.full, 2), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 2))),
+        6 => Some(format!("{}{}", Rating::repeat(map.full, 3), Rating::repeat(map.nil, 2))),
+        7 => Some(format!("{}{}{}", Rating::repeat(map.full, 3), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 1))),
+        8 => Some(format!("{}{}", Rating::repeat(map.full, 4), Rating::repeat(map.nil, 1))),
+        9 => Some(format!("{}{}", Rating::repeat(map.full, 4), Rating::repeat(map.half, 1))),
+        10.. => Some(Rating::repeat(map.full, 5)),
+        _ =>  Some(format!("Invalid rating!"))
       }
     },
     None => {
-      Rating::repeat(map.nil, 5)
+      None
+      // Rating::repeat(map.nil, 5)
     },
   }
 }
@@ -79,7 +80,12 @@ pub fn update_message(pf: &PlayerFinder, cfg: &Config, data: &mut Data) {
         for field in &cfg.metadata_fields {
           if field.field.eq("xesam:userRating") || field.field.eq("xesam:autoRating") {
             let key = field.field.clone();
-            data.display_text.insert(field.field.clone(), rating_to_string(m.get(&key), &cfg.rating_icons));
+            let string = rating_to_string(m.get(&key), &cfg.rating_icons);
+            if let Some(str) = string {
+              data.display_text.insert(field.field.clone(), str);
+            } else {
+              data.display_text.remove(&key);
+            }
           } else {
             let key = field.field.clone();
             match m.get(&key) {

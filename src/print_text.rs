@@ -36,6 +36,7 @@ fn build_string(cfg: &Config, data: &mut Data) -> String {
         idx += 1;
         b.append(string.clone());
         if idx < len {b.append(format!(" {} ", cfg.metadata_separator))};
+        // TODO: fix the above its a mess and outputs incorrectly sometimes
       } else {
         info!("failed to get {} value!", string.field);
       }
