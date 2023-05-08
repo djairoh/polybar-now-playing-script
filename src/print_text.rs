@@ -23,7 +23,7 @@ fn cutoff(fields: &Vec<Field>, brk: char, strings: &mut HashMap<String, String>)
 fn build_string(cfg: &Config, data: &mut Data) -> String {
   let mut b = Builder::default();
   
-  if cfg.hide_output && data.current_player.is_none() {
+  if cfg.hide_output && data.current_player.is_none() { 
     b.append(' ');
   } else {
     cutoff(&cfg.metadata_fields, cfg.break_character, &mut data.display_text);

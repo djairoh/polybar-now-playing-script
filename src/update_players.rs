@@ -10,32 +10,19 @@ pub fn update_players(
   if players.is_empty() {
     data.current_player = None;
   } else {
-    let mut active: Vec<Vec<(i32, String)>> = vec![Vec::new(), Vec::new(), Vec::new()];
+    let mut active: Vec<(i32, String)> = Vec::new();
     for player in players {
-      if cfg.player_priorities.contains(&player.identity().to_owned().to_ascii_lowercase()) {
+      if let Ok(mpris::PlaybackStatus::Playing) = player.get_playback_status() {
         let name = player.identity();
         let idx = cfg.find_player_priorities_idx(name);
-        if let Ok(status) = player.get_playback_status() {
-          match status {
-            mpris::PlaybackStatus::Playing => active[0].push((idx, name.to_owned())),
-            mpris::PlaybackStatus::Paused => active[1].push((idx, name.to_owned())),
-            mpris::PlaybackStatus::Stopped => active[2].push((idx, name.to_owned())),
-          };
-        }
+        active.push((idx, name.to_owned()));
       }
     }
-    if !active[0].is_empty() {
-      data.current_player =  Some(get_lowest(&active[0]));
-    } else if !active[1].is_empty() {
-      data.current_player =  Some(get_lowest(&active[1]));
-    } else if !active[2].is_empty() {
-      data.current_player =  Some(get_lowest(&active[2]));
+
+    if !active.is_empty() {
+      data.current_player =  Some(get_lowest(&active));
     } else {
-      if let Ok(player) = pf.find_active() {
-        data.current_player = Some(player.identity().to_owned());
-      } else {
-        data.current_player = None;
-      }
+      data.current_player = None;
     }
   }
 }

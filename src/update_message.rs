@@ -46,25 +46,28 @@ fn value_to_string(v: &MetadataValue, sep: char) -> String {
 fn rating_to_string(r: Option<&MetadataValue>, map: &Rating) -> Option<String> {
   match r {
     Some(rating) => {
-      let f = (rating.as_f64().unwrap() * 10_f64).round() as i64;
-      match f { //todo: refactor
-        0 => Some(Rating::repeat(map.nil, 5)),
-        1 => Some(format!("{}{}", Rating::repeat(map.half, 1), Rating::repeat(map.nil, 4))),
-        2 => Some(format!("{}{}", Rating::repeat(map.full, 1), Rating::repeat(map.nil, 4))),
-        3 => Some(format!("{}{}{}", Rating::repeat(map.full, 1), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 3))),
-        4 => Some(format!("{}{}", Rating::repeat(map.full, 2), Rating::repeat(map.nil, 3))),
-        5 => Some(format!("{}{}{}", Rating::repeat(map.full, 2), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 2))),
-        6 => Some(format!("{}{}", Rating::repeat(map.full, 3), Rating::repeat(map.nil, 2))),
-        7 => Some(format!("{}{}{}", Rating::repeat(map.full, 3), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 1))),
-        8 => Some(format!("{}{}", Rating::repeat(map.full, 4), Rating::repeat(map.nil, 1))),
-        9 => Some(format!("{}{}", Rating::repeat(map.full, 4), Rating::repeat(map.half, 1))),
-        10.. => Some(Rating::repeat(map.full, 5)),
-        _ =>  Some(format!("Invalid rating!"))
+      if let Some(f) = rating.as_f64() {
+        let i = (f * 10_f64.round()) as i64;
+        match i {
+          0 => Some(Rating::repeat(map.nil, 5)),
+          1 => Some(format!("{}{}",   Rating::repeat(map.half, 1), Rating::repeat(map.nil,  4))),
+          2 => Some(format!("{}{}",   Rating::repeat(map.full, 1), Rating::repeat(map.nil,  4))),
+          3 => Some(format!("{}{}{}", Rating::repeat(map.full, 1), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 3))),
+          4 => Some(format!("{}{}",   Rating::repeat(map.full, 2), Rating::repeat(map.nil,  3))),
+          5 => Some(format!("{}{}{}", Rating::repeat(map.full, 2), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 2))),
+          6 => Some(format!("{}{}",   Rating::repeat(map.full, 3), Rating::repeat(map.nil,  2))),
+          7 => Some(format!("{}{}{}", Rating::repeat(map.full, 3), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 1))),
+          8 => Some(format!("{}{}",   Rating::repeat(map.full, 4), Rating::repeat(map.nil,  1))),
+          9 => Some(format!("{}{}",   Rating::repeat(map.full, 4), Rating::repeat(map.half, 1))),
+          10.. => Some(Rating::repeat(map.full, 5)),
+          _ =>  Some(format!("Invalid rating!"))
+        }
+      } else {
+        None
       }
     },
     None => {
       None
-      // Rating::repeat(map.nil, 5)
     },
   }
 }
