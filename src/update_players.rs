@@ -6,7 +6,7 @@ pub fn update_players(
   cfg: &Config,
   mut data: &mut Data,
 ) {
-  let players = pf.find_all().unwrap(); //todo: error handling
+  let players = pf.find_all().unwrap_or(Vec::new());
   if players.is_empty() {
     data.current_player = None;
   } else {
@@ -14,13 +14,14 @@ pub fn update_players(
     for player in players {
       if cfg.player_priorities.contains(&player.identity().to_owned().to_ascii_lowercase()) {
         let name = player.identity();
-        let idx = cfg.player_priorities.iter().position(|x| x.to_ascii_lowercase().eq(&name.to_ascii_lowercase())).unwrap() as i32; //todo: move to function in config; error handling
-        let status = player.get_playback_status().unwrap(); //todo: error handling
-        match status {
+        let idx = cfg.find_player_priorities_idx(name);
+        if let Ok(status) = player.get_playback_status() {
+          match status {
             mpris::PlaybackStatus::Playing => active[0].push((idx, name.to_owned())),
             mpris::PlaybackStatus::Paused => active[1].push((idx, name.to_owned())),
             mpris::PlaybackStatus::Stopped => active[2].push((idx, name.to_owned())),
-        };
+          };
+        }
       }
     }
     if !active[0].is_empty() {
