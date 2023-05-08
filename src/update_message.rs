@@ -11,7 +11,7 @@ fn update_prefix(cfg: &Config, data: &mut Data) {
       data.display_prefix = char.clone();
       trace!("updated prefix to {}", data.display_prefix);
     } else {
-      data.display_prefix = cfg.player_prefixes.get("default").unwrap().clone();  //todo: error handling
+      data.display_prefix = cfg.player_prefixes.get("default").unwrap_or(&'>').clone();
       trace!("set prefix to default ({})", data.display_prefix);
     }
   }

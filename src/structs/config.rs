@@ -21,16 +21,6 @@ impl Field {
   }
 }
 
-// I shouldn't need this; remove when done with testing FIXME
-impl Default for Field {
-    fn default() -> Self {
-        Self { 
-          field: Default::default(), 
-          num_chars: Default::default() 
-        }
-    }
-}
-
 #[derive(Serialize, Deserialize)]
 pub struct Rating {
   pub nil: char,
@@ -92,6 +82,14 @@ impl Default for Config {
 impl Config {
   pub fn priorities_to_lower(&mut self) {
     self.player_priorities = self.player_priorities.iter().map(|i| i.to_lowercase()).collect();
+  }
+
+  pub fn find_player_priorities_idx(&self, name: &str) -> i32 {
+    match self.player_priorities.iter()
+    .position(|x| x.to_ascii_lowercase().eq(&name.to_ascii_lowercase())) {
+        Some(idx) => idx as i32,
+        None => i32::MAX,
+    }
   }
 }
 
