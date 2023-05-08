@@ -82,7 +82,7 @@ pub fn update_message(pf: &PlayerFinder, cfg: &Config, data: &mut Data) {
             let key = field.field.clone();
             let string = rating_to_string(m.get(&key), &cfg.rating_icons);
             if let Some(str) = string {
-              data.display_text.insert(field.field.clone(), str);
+              data.display_text.insert(key, str);
             } else {
               data.display_text.remove(&key);
             }

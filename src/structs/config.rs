@@ -21,16 +21,6 @@ impl Field {
   }
 }
 
-// I shouldn't need this; remove when done with testing FIXME
-impl Default for Field {
-    fn default() -> Self {
-        Self { 
-          field: Default::default(), 
-          num_chars: Default::default() 
-        }
-    }
-}
-
 #[derive(Serialize, Deserialize)]
 pub struct Rating {
   pub nil: char,

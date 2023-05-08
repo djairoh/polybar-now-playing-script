@@ -4,6 +4,8 @@ use string_builder::Builder;
 
 use crate::structs::{config::{Field, Config}, data::Data};
 
+// TODO: update this function to apply a 'fuzzy' mode instead (possibly add config option).
+// This would find the space character nearest the num_chars index and cut off there, allowing for cleaner truncation.
 fn cutoff(fields: &Vec<Field>, brk: char, strings: &mut HashMap<String, String>) {
   for field in fields {
     if !field.field.eq("xesam:userRating") && !field.field.eq("xesam:autoRating") {
