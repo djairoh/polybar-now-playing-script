@@ -4,19 +4,20 @@ use string_builder::Builder;
 
 use crate::structs::{config::{Field, Config}, data::Data};
 
-// TODO: update this function to apply a 'fuzzy' mode instead (possibly add config option).
-// This would find the space character nearest the num_chars index and cut off there, allowing for cleaner truncation.
-fn cutoff(fields: &Vec<Field>, brk: Option<char>, strings: &mut HashMap<String, String>) {
+
+fn fuzzy_cutoff(str: &str) -> usize{
+  str.rfind(char::is_whitespace).unwrap_or(usize::MAX)
+}
+
+fn cutoff(fields: &Vec<Field>, brk: Option<char>, fuzzy: bool, strings: &mut HashMap<String, String>) {
   for field in fields {
-    if !field.field.eq("xesam:userRating") && !field.field.eq("xesam:autoRating") {
-      let a = strings.get(&field.field);
-      if a.is_some() && a.unwrap().len() >= field.num_chars as usize {
-        let mut b = a.unwrap().clone();
-        b.truncate(field.num_chars as usize);
+    if let Some(str) = strings.get_mut(&field.field) {
+      if !field.field.eq("xesam:userRating") && str.len() >= field.num_chars as usize {
+        str.truncate(field.num_chars as usize);
+        if fuzzy {str.truncate(fuzzy_cutoff(str))}
         if let Some(c) = brk {
-          b.push(c)
+          str.push(c);
         }
-        strings.insert(field.field.clone(), b);
       }
     }
   }
@@ -42,7 +43,7 @@ fn append_fields(b: &mut Builder, cfg: &Config, data: &Data) {
 
 fn build_string(cfg: &Config, data: &mut Data) -> String {
   let mut b = Builder::default();
- 
+
   if cfg.render_prefix {
     append_prefix(&mut b, data);
   }
@@ -54,10 +55,10 @@ fn build_string(cfg: &Config, data: &mut Data) -> String {
 }
 
 pub fn print_text(cfg: &Config, data: &mut Data) {
-  if cfg.hide_output && data.current_player.is_none() {
+  if (cfg.hide_output && data.current_player.is_none()) || data.display_text.is_empty() || cfg.metadata_fields.is_empty() {
     println!("");
   } else {
-    cutoff(&cfg.metadata_fields, cfg.break_character, &mut data.display_text);
+    cutoff(&cfg.metadata_fields, cfg.break_character, cfg.fuzzy, &mut data.display_text);
     println!("{}", build_string(cfg, data));
   }
 }
