@@ -38,9 +38,9 @@ impl Rating {
 
 impl Default for Rating {
     fn default() -> Self {
-        Self { 
-          nil: '-', 
-          half: '/', 
+        Self {
+          nil: '-',
+          half: '/',
           full: '+'
         }
     }
@@ -53,8 +53,8 @@ pub struct Config {
   pub array_separator: char,
   pub hide_output: bool,
   pub render_prefix: bool,
-  pub break_character: char,
-  pub player_priorities: Vec<String>,  
+  pub break_character: Option<char>,
+  pub player_priorities: Vec<String>,
   pub rating_icons: Rating,
   pub metadata_fields: Vec<Field>,
   pub player_prefixes: HashMap<String, char>,
@@ -72,18 +72,14 @@ impl Default for Config {
         render_prefix: true,
         metadata_fields: vec![Field::constructor("xesam:title", 40), Field::constructor("xesam:artist", 20)],
         rating_icons: Rating::default(),
-        player_priorities: vec![ms("clementine"), ms("spotify"), ms("deadbeef"), ms("mpv"), ms("vlc"), ms("firefox"), ms("chromium")],
-        break_character: '-',
+        player_priorities: vec![ms("Clementine"), ms("Spotify"), ms("mpv"), ms("VLC Media Player"), ms("Firefox"), ms("Chromium")],
+        break_character: Some('-'),
         player_prefixes: default_player_prefixes(),
       }
   }
 }
 
 impl Config {
-  pub fn priorities_to_lower(&mut self) {
-    self.player_priorities = self.player_priorities.iter().map(|i| i.to_lowercase()).collect();
-  }
-
   pub fn find_player_priorities_idx(&self, name: &str) -> i32 {
     match self.player_priorities.iter()
     .position(|x| x.eq(&name)) {
@@ -97,14 +93,12 @@ fn ms(str: &str) -> String {
   str.to_string()
 }
 
-// FIXME: changed some functions to use case-sensitive matching instead, breaking this
-// and also all my existing config files. Whoops
 fn default_player_prefixes() -> HashMap<String, char> {
   let mut out: HashMap<String, char> = HashMap::new();
 
-  out.insert("clementine".to_owned(), 'c');
-  out.insert("firefox".to_owned(), 'f');
-  out.insert("spotify".to_owned(), 's');
+  out.insert("Clementine".to_owned(), 'c');
+  out.insert("Firefox".to_owned(), 'f');
+  out.insert("Spotify".to_owned(), 's');
   out.insert("default".to_owned(), '>');
 
   out
