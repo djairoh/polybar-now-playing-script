@@ -31,10 +31,9 @@ pub fn update_players(
       }
     }
 
-    if !active.is_empty() {
-      let cur = active.first_entry().unwrap().remove();
-      update_prefix(cfg, &mut data.display_prefix, cur.identity());
-      data.current_player = Some(cur);
+    if let Some((_, player)) = active.pop_first() {
+      update_prefix(cfg, &mut data.display_prefix, player.identity());
+      data.current_player = Some(player);
     } else {
       data.current_player = None;
     }
