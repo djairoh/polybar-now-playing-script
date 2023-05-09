@@ -1,5 +1,7 @@
+use std::collections::BTreeMap;
+
 use log::trace;
-use mpris::{PlayerFinder, Metadata, Player};
+use mpris::{PlayerFinder, Player};
 use crate::structs::{data::Data, config::Config};
 
 fn update_prefix(cfg: &Config, data: &mut char, name: &str) {
@@ -21,30 +23,20 @@ pub fn update_players(
   if players.is_empty() {
     data.current_player = None;
   } else {
-    let mut active: Vec<(i32, Player)> = Vec::new();
+    let mut active: BTreeMap<i32, Player> = BTreeMap::new();
     for player in players {
       if let Ok(mpris::PlaybackStatus::Playing) = player.get_playback_status() {
         let idx = cfg.find_player_priorities_idx(player.identity());
-        active.push((idx, player));
+        active.insert(idx, player);
       }
     }
 
     if !active.is_empty() {
-      let cur = get_lowest(&mut active);
+      let cur = active.first_entry().unwrap().remove();
       update_prefix(cfg, &mut data.display_prefix, cur.identity());
       data.current_player = Some(cur);
     } else {
       data.current_player = None;
     }
   }
-}
-
-fn get_lowest(v: &mut Vec<(i32, Player)>) -> Player {
-  let mut lowest_index = i32::MAX;  //FIXME: use options here instead, also fixes a bug
-  for (v_id, _) in v.into_iter() {
-    if v_id < &mut lowest_index {
-      lowest_index = *v_id;
-    }
-  }
-  v.swap_remove(lowest_index as usize).1
 }
