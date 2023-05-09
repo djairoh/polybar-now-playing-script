@@ -1,6 +1,6 @@
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::thread::{self};
+use std::thread;
 use clap::Parser;
 use mpris::PlayerFinder;
 use structs::cli::Cli;
@@ -29,35 +29,37 @@ fn default_loop(pf: &PlayerFinder, cfg: &Config, data: &mut Data) {
 }
 
 fn main() {
-    //dotenvy::dotenv().expect("Failed to read .env file");
     std::env::set_var("RUST_LOG", "error");
     if let Err(e) = env_logger::init() {
       panic!("{}", e);
     }
 
     let cli = Cli::parse();
-    let mut cfg: Config = confy::load("polybar-now-playing", cli.config_file.as_str()).unwrap(); //TODO: error handling
-    cfg.priorities_to_lower();
-    let mut data: Data = Data::default();
-    let term = Arc::new(AtomicBool::new(false));
+    match confy::load::<Config>("polybar-now-playing", cli.config_file.as_str()) {
+      Ok(cfg) => {
+        let mut data: Data = Data::default();
+        let term = Arc::new(AtomicBool::new(false));
+        
+        let pf: PlayerFinder = PlayerFinder::new()
+          .expect("Failed to connect to Dbus!");
+        
+        if let Err(e) = signal_hook::flag::register(signal_hook::consts::SIGUSR1, Arc::clone(&term)) {
+          panic!("{}", e);
+        }
 
-    let pf: PlayerFinder = PlayerFinder::new()
-      .expect("Failed to connect to Dbus!");
-
-    if let Err(e) = signal_hook::flag::register(signal_hook::consts::SIGUSR1, Arc::clone(&term)) {
-      panic!("{}", e);
-    }
-
-    loop {
-      thread::sleep(cfg.update_delay);
-      match cli.debug {
-        true => print_players(&pf),
-        false => default_loop(&pf, &cfg, &mut data),
-      }
-
-      if term.load(Ordering::Relaxed) {
-        handle_signal(&data);
-        term.swap(false, Ordering::Relaxed);
-      };
-    }
-  }
+        loop {
+          thread::sleep(cfg.update_delay);
+          match cli.debug {
+            true => print_players(&pf),
+            false => default_loop(&pf, &cfg, &mut data),
+          }
+        
+          if term.load(Ordering::Relaxed) {
+            handle_signal(&data);
+            term.swap(false, Ordering::Relaxed);
+          };
+        }
+      },
+    Err(_) => println!("Failed to read config file {}", cli.config_file),
+  };
+}
