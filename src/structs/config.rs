@@ -86,7 +86,7 @@ impl Config {
 
   pub fn find_player_priorities_idx(&self, name: &str) -> i32 {
     match self.player_priorities.iter()
-    .position(|x| x.to_ascii_lowercase().eq(&name.to_ascii_lowercase())) {
+    .position(|x| x.eq(&name)) {
         Some(idx) => idx as i32,
         None => i32::MAX,
     }
@@ -97,6 +97,8 @@ fn ms(str: &str) -> String {
   str.to_string()
 }
 
+// FIXME: changed some functions to use case-sensitive matching instead, breaking this
+// and also all my existing config files. Whoops
 fn default_player_prefixes() -> HashMap<String, char> {
   let mut out: HashMap<String, char> = HashMap::new();
 
