@@ -59,7 +59,6 @@ pub struct Config {
   pub rating_icons: Rating,
   pub metadata_fields: Vec<Field>,
   pub player_prefixes: HashMap<String, char>,
-  
 }
 
 impl Default for Config {
