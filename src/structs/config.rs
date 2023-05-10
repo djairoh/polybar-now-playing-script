@@ -49,7 +49,7 @@ impl Default for Rating {
 #[derive(Serialize, Deserialize)]
 pub struct Config {
   pub font_index: u8,
-  pub metadata_separator: char, //replace with custom string, to allow for font indexing with polybar (+ custom BG and FG color) TODO
+  pub metadata_separator: String,
   pub array_separator: char,
   pub hide_output: bool,
   pub fuzzy: bool,
@@ -67,7 +67,7 @@ impl Default for Config {
       Config {
         font_index: 1,
         update_delay: time::Duration::from_millis(300),
-        metadata_separator: '|',
+        metadata_separator: "|".to_owned(),
         array_separator: '+',
         hide_output: true,
         fuzzy: false,
