@@ -32,7 +32,7 @@ fn rating_to_string(r: Option<&MetadataValue>, map: &Rating) -> Option<String> {
   match r {
     Some(rating) => {
       if let Some(f) = rating.as_f64() {
-        let i = (f * 10_f64.round()) as i64;
+        let i = (f * 10_f64).round() as i64;
         match i {
           0 => Some(Rating::repeat(map.nil, 5)),
           1 => Some(format!("{}{}",   Rating::repeat(map.half, 1), Rating::repeat(map.nil,  4))),
