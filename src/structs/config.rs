@@ -47,12 +47,12 @@ impl Default for Rating {
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
-  pub metadata_separator: String,
-  pub array_separator: char,
-  pub update_delay: u64,
   pub hide_output: bool,
   pub fuzzy: bool,
   pub render_prefix: bool,
+  pub update_delay: u64,
+  pub metadata_separator: String,
+  pub array_separator: char,
   pub break_character: Option<char>,
   pub player_priorities: Vec<String>,
   pub rating_icons: Option<Rating>,
@@ -63,16 +63,16 @@ pub struct Config {
 impl Default for Config {
   fn default() -> Self {
       Config {
-        update_delay: 300_u64,
-        metadata_separator: "|".to_owned(),
-        array_separator: '+',
         hide_output: true,
         fuzzy: false,
         render_prefix: true,
-        metadata_fields: Config::default_metadata_fields(),
-        rating_icons: Some(Rating::default()),
-        player_priorities: Config::default_player_priorities(),
+        update_delay: 300_u64,
+        metadata_separator: " | ".to_owned(),
+        array_separator: '+',
         break_character: Some('-'),
+        player_priorities: Config::default_player_priorities(),
+        rating_icons: Some(Rating::default()),
+        metadata_fields: Config::default_metadata_fields(),
         player_prefixes: Config::default_player_prefixes(),
       }
   }
@@ -108,10 +108,13 @@ impl Config {
   fn default_player_prefixes() -> HashMap<String, char> {
     let mut out: HashMap<String, char> = HashMap::new();
 
+    out.insert("chromium".to_owned(), 'g');
     out.insert("Clementine".to_owned(), 'c');
-    out.insert("Firefox".to_owned(), 'f');
-    out.insert("Spotify".to_owned(), 's');
     out.insert("default".to_owned(), '>');
+    out.insert("Firefox".to_owned(), 'f');
+    out.insert("mpv".to_owned(), 'm');
+    out.insert("Spotify".to_owned(), 's');
+    out.insert("VLC Media Player".to_owned(), 'v');
 
     out
   }
