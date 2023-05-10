@@ -48,7 +48,6 @@ impl Default for Rating {
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
-  pub font_index: u8,
   pub metadata_separator: String,
   pub array_separator: char,
   pub hide_output: bool,
@@ -65,7 +64,6 @@ pub struct Config {
 impl Default for Config {
   fn default() -> Self {
       Config {
-        font_index: 1,
         update_delay: time::Duration::from_millis(300),
         metadata_separator: "|".to_owned(),
         array_separator: '+',
