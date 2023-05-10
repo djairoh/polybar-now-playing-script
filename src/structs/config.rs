@@ -1,5 +1,4 @@
-use core::time;
-use std::{collections::HashMap, time::Duration};
+use std::{collections::HashMap};
 use serde::{Serialize, Deserialize};
 
 
@@ -98,22 +97,22 @@ impl Config {
       "Chromium".to_owned()
     ]
   }
-  
+
   fn default_metadata_fields() -> Vec<Field> {
     vec![
       Field::constructor("xesam:title", 40),
       Field::constructor("xesam:artist", 20)
     ]
   }
-  
+
   fn default_player_prefixes() -> HashMap<String, char> {
     let mut out: HashMap<String, char> = HashMap::new();
-  
+
     out.insert("Clementine".to_owned(), 'c');
     out.insert("Firefox".to_owned(), 'f');
     out.insert("Spotify".to_owned(), 's');
     out.insert("default".to_owned(), '>');
-  
+
     out
   }
 }
