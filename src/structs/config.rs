@@ -50,6 +50,7 @@ impl Default for Rating {
 pub struct Config {
   pub metadata_separator: String,
   pub array_separator: char,
+  pub update_delay: u64,
   pub hide_output: bool,
   pub fuzzy: bool,
   pub render_prefix: bool,
@@ -58,7 +59,7 @@ pub struct Config {
   pub rating_icons: Rating,
   pub metadata_fields: Vec<Field>,
   pub player_prefixes: HashMap<String, char>,
-  pub update_delay: u64,
+  
 }
 
 impl Default for Config {
