@@ -49,7 +49,7 @@ impl Default for Rating {
 #[derive(Serialize, Deserialize)]
 pub struct Config {
   pub font_index: u8,
-  pub metadata_separator: char,
+  pub metadata_separator: char, //replace with custom string, to allow for font indexing with polybar (+ custom BG and FG color) TODO
   pub array_separator: char,
   pub hide_output: bool,
   pub fuzzy: bool,
@@ -72,11 +72,11 @@ impl Default for Config {
         hide_output: true,
         fuzzy: false,
         render_prefix: true,
-        metadata_fields: vec![Field::constructor("xesam:title", 40), Field::constructor("xesam:artist", 20)],
+        metadata_fields: Config::default_metadata_fields(),
         rating_icons: Rating::default(),
-        player_priorities: vec![ms("Clementine"), ms("Spotify"), ms("mpv"), ms("VLC Media Player"), ms("Firefox"), ms("Chromium")],
+        player_priorities: Config::default_player_priorities(),
         break_character: Some('-'),
-        player_prefixes: default_player_prefixes(),
+        player_prefixes: Config::default_player_prefixes(),
       }
   }
 }
@@ -89,19 +89,34 @@ impl Config {
         None => i32::MAX,
     }
   }
+
+  fn default_player_priorities() -> Vec<String> {
+    vec![
+      "Clementine".to_owned(),
+      "Spotify".to_owned(),
+      "mpv".to_owned(),
+      "VLC Media Player".to_owned(),
+      "Firefox".to_owned(),
+      "Chromium".to_owned()
+    ]
+  }
+  
+  fn default_metadata_fields() -> Vec<Field> {
+    vec![
+      Field::constructor("xesam:title", 40),
+      Field::constructor("xesam:artist", 20)
+    ]
+  }
+  
+  fn default_player_prefixes() -> HashMap<String, char> {
+    let mut out: HashMap<String, char> = HashMap::new();
+  
+    out.insert("Clementine".to_owned(), 'c');
+    out.insert("Firefox".to_owned(), 'f');
+    out.insert("Spotify".to_owned(), 's');
+    out.insert("default".to_owned(), '>');
+  
+    out
+  }
 }
 
-fn ms(str: &str) -> String {
-  str.to_string()
-}
-
-fn default_player_prefixes() -> HashMap<String, char> {
-  let mut out: HashMap<String, char> = HashMap::new();
-
-  out.insert("Clementine".to_owned(), 'c');
-  out.insert("Firefox".to_owned(), 'f');
-  out.insert("Spotify".to_owned(), 's');
-  out.insert("default".to_owned(), '>');
-
-  out
-}
