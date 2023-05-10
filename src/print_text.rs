@@ -5,17 +5,29 @@ use string_builder::Builder;
 use crate::structs::{config::{Field, Config}, data::Data};
 
 
-fn fuzzy_cutoff(str: &str) -> usize{
+fn fuzzy_cutoff(str: &str) -> usize {
   str.rfind(char::is_whitespace).unwrap_or(usize::MAX)
+}
+
+fn get_char_boundary(str: &str, max_len: usize) -> usize {
+  match str.is_char_boundary(max_len) {
+    true => max_len,
+    false => {
+      let mut idx = max_len;
+      while !str.is_char_boundary(idx) {
+        idx -= 1;
+      }
+      idx
+    },
+  }
 }
 
 fn cutoff(fields: &Vec<Field>, brk: Option<char>, fuzzy: bool, strings: &mut HashMap<String, String>) {
   for field in fields {
     if let Some(str) = strings.get_mut(&field.field) {
       if !field.field.eq("xesam:userRating") && str.len() >= field.num_chars as usize {
-        str.truncate(field.num_chars as usize);
+        str.truncate(get_char_boundary(str, field.num_chars as usize));
         if fuzzy {str.truncate(fuzzy_cutoff(str))}
-        // The above crashes on non-utf8 characters. FIXME: do something about that
         if let Some(c) = brk {
           str.push(c);
         }
