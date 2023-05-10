@@ -58,13 +58,13 @@ pub struct Config {
   pub rating_icons: Rating,
   pub metadata_fields: Vec<Field>,
   pub player_prefixes: HashMap<String, char>,
-  pub update_delay: Duration,
+  pub update_delay: u64,
 }
 
 impl Default for Config {
   fn default() -> Self {
       Config {
-        update_delay: time::Duration::from_millis(300),
+        update_delay: 300_u64,
         metadata_separator: "|".to_owned(),
         array_separator: '+',
         hide_output: true,

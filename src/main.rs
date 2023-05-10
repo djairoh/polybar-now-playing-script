@@ -1,3 +1,4 @@
+use core::time;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
@@ -48,7 +49,8 @@ fn main() {
         }
 
         loop {
-          thread::sleep(cfg.update_delay);
+          // thread::sleep(cfg.update_delay);
+          thread::sleep(time::Duration::from_millis(cfg.update_delay));
           match cli.debug {
             true => print_players(&pf),
             false => default_loop(&pf, &cfg, &mut data),
