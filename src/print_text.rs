@@ -6,11 +6,11 @@ use crate::structs::{config::{Field, Config}, data::Data};
 
 
 fn fuzzy_cutoff(str: &str) -> usize {
-  str.rfind(char::is_whitespace).unwrap_or(usize::MAX)
+  str.rfind(char::is_whitespace).unwrap_or_else( || usize::MAX)
 }
 
 fn get_char_boundary(str: &str, max_len: usize) -> usize {
-  match str.is_char_boundary(max_len) {
+  match max_len > str.len() || str.is_char_boundary(max_len) {
     true => max_len,
     false => {
       let mut idx = max_len;
@@ -25,7 +25,7 @@ fn get_char_boundary(str: &str, max_len: usize) -> usize {
 fn cutoff(fields: &Vec<Field>, brk: Option<char>, fuzzy: bool, strings: &mut HashMap<String, String>) {
   for field in fields {
     if let Some(str) = strings.get_mut(&field.field) {
-      if !field.field.eq("xesam:userRating") && str.len() >= field.num_chars as usize {
+      if str.len() >= field.num_chars as usize {
         str.truncate(get_char_boundary(str, field.num_chars as usize));
         if fuzzy {str.truncate(fuzzy_cutoff(str))}
         if let Some(c) = brk {
@@ -37,7 +37,7 @@ fn cutoff(fields: &Vec<Field>, brk: Option<char>, fuzzy: bool, strings: &mut Has
 }
 
 fn append_prefix(b: &mut Builder, data: &Data) {
-  b.append(data.display_prefix.clone());
+  b.append(data.display_prefix);
   b.append("  ");
 }
 
@@ -47,7 +47,7 @@ fn append_fields(b: &mut Builder, cfg: &Config, data: &Data) {
     if let Some(string) = data.display_text.get(&string.field) {
       idx += 1;
       b.append(string.clone());
-      if idx < len {b.append(format!(" {} ", cfg.metadata_separator))};
+      if idx < len {b.append(format!("{}", cfg.metadata_separator))};
     } else {
       info!("failed to get {} value!", string.field);
     }
