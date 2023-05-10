@@ -9,9 +9,9 @@ pub struct Field {
 }
 
 impl Field {
-  fn new(metadata_field: String, num_chars: u8) -> Self {
+  fn new(field: String, num_chars: u8) -> Self {
     Field {
-      field: metadata_field,
+      field,
       num_chars
     }
   }
