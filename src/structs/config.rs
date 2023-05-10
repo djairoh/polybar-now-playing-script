@@ -55,7 +55,7 @@ pub struct Config {
   pub render_prefix: bool,
   pub break_character: Option<char>,
   pub player_priorities: Vec<String>,
-  pub rating_icons: Rating,
+  pub rating_icons: Option<Rating>,
   pub metadata_fields: Vec<Field>,
   pub player_prefixes: HashMap<String, char>,
 }
@@ -70,7 +70,7 @@ impl Default for Config {
         fuzzy: false,
         render_prefix: true,
         metadata_fields: Config::default_metadata_fields(),
-        rating_icons: Rating::default(),
+        rating_icons: Some(Rating::default()),
         player_priorities: Config::default_player_priorities(),
         break_character: Some('-'),
         player_prefixes: Config::default_player_prefixes(),
