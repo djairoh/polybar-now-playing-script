@@ -15,6 +15,7 @@ fn cutoff(fields: &Vec<Field>, brk: Option<char>, fuzzy: bool, strings: &mut Has
       if !field.field.eq("xesam:userRating") && str.len() >= field.num_chars as usize {
         str.truncate(field.num_chars as usize);
         if fuzzy {str.truncate(fuzzy_cutoff(str))}
+        // The above crashes on non-utf8 characters. FIXME: do something about that
         if let Some(c) = brk {
           str.push(c);
         }
@@ -47,9 +48,7 @@ fn build_string(cfg: &Config, data: &mut Data) -> String {
   if cfg.render_prefix {
     append_prefix(&mut b, data);
   }
-  b.append(format!("%{{T{}}}", cfg.font_index));
   append_fields(&mut b, cfg, data);
-  b.append("%{T-}");
 
   b.string().unwrap_or("Failed to unwrap string!".to_owned())
 }
