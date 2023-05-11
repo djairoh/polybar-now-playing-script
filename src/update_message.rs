@@ -1,8 +1,6 @@
-use log::error;
 use mpris::{MetadataValue};
-use string_builder::Builder;
 
-use crate::structs::{config::{Rating, Config}, data::Data};
+use crate::structs::{config::Config, data::Data};
 
 fn value_to_string(v: &MetadataValue, sep: char) -> String {
   match v {

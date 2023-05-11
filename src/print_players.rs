@@ -1,3 +1,4 @@
+use log::error;
 use mpris::PlayerFinder;
 
 
@@ -12,6 +13,6 @@ pub fn print_players(pf: &PlayerFinder) {
                 }
             }
         },
-        Err(e) => println!("{}", e),
+        Err(e) => error!("{e}"),
     }
 }

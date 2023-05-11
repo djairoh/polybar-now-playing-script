@@ -1,9 +1,10 @@
 use core::time;
+use std::process::exit;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
 use clap::Parser;
-use log::error;
+use log::{error, info};
 use mpris::PlayerFinder;
 use structs::cli::Cli;
 use structs::{config::Config, data::Data};
@@ -20,7 +21,15 @@ mod print_players;
 
 fn handle_signal(data: &Data) {
   if let Some(p) = &data.current_player {
-    let _ = p.checked_play_pause();
+    match p.checked_play_pause() {
+        Ok(b) => {
+          match b {
+            true => info!("Player play/paused succesfully!"),
+            false => info!("Failed to send play/pause signal!"),
+        }
+      },
+        Err(e) => error!("{e}"),
+    }
   }
 }
 
@@ -33,7 +42,8 @@ fn default_loop(pf: &PlayerFinder, cfg: &Config, data: &mut Data, r: &Vec<String
 fn main() {
     std::env::set_var("RUST_LOG", "error");
     if let Err(e) = env_logger::init() {
-      panic!("{}", e);
+      error!("{e}");
+      return
     }
 
     let cli = Cli::parse();
@@ -44,11 +54,18 @@ fn main() {
 
         let term = Arc::new(AtomicBool::new(false));
         
-        let pf: PlayerFinder = PlayerFinder::new()
-          .expect("Failed to connect to Dbus!");
-        
+        let pf: PlayerFinder;        
+        match PlayerFinder::new() {
+            Ok(finder) => pf = finder,
+            Err(e) => {
+              error!("{e}");
+              return
+            },
+        }
+
         if let Err(e) = signal_hook::flag::register(signal_hook::consts::SIGUSR1, Arc::clone(&term)) {
-          panic!("{}", e);
+          error!("{e}");
+          return
         }
 
         loop {
@@ -66,7 +83,6 @@ fn main() {
       },
     Err(e) => {
       error!("{e}");
-      println!("Failed to read config file {}", cli.config_file);
     },
   };
 }
