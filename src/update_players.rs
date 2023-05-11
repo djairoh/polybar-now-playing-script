@@ -32,7 +32,7 @@ pub fn update_players(
     }
 
     if let Some((_, player)) = active.pop_first() {
-      update_prefix(cfg, &mut data.display_prefix, player.identity());
+      update_prefix(cfg, &mut data.prefix, player.identity());
       data.current_player = Some(player);
     } else {
       data.current_player = None;

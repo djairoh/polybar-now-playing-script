@@ -56,14 +56,14 @@ pub fn update_message(cfg: &Config, data: &mut Data, ratings: &Vec<String>) {
         let key = field.field.clone();
         if field.field.eq("xesam:userRating") {
           if let Some(rating_string) = rating_to_string(meta.get(&key), ratings) {
-            data.display_text.insert(key, rating_string);
+            data.field_text.insert(key, rating_string);
           } else {
-            data.display_text.remove(&key);
+            data.field_text.remove(&key);
           }
         } else {
           match meta.get(&key) {
-            Some(value) => data.display_text.insert(key, value_to_string(value, cfg.array_separator)),
-            None => data.display_text.insert(key, format!("No {}", field.field.clone().trim_start_matches("xesam:"))),
+            Some(value) => data.field_text.insert(key, value_to_string(value, cfg.array_separator)),
+            None => data.field_text.insert(key, format!("No {}", field.field.clone().trim_start_matches("xesam:"))),
           };
         }
       }

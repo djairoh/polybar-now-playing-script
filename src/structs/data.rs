@@ -4,16 +4,16 @@ use mpris::Player;
 
 pub struct Data {
   pub current_player: Option<Player>, 
-  pub display_text: HashMap<String, String>,
-  pub display_prefix: char,
+  pub field_text: HashMap<String, String>,
+  pub prefix: char,
 }
 
 impl Default for Data {
     fn default() -> Self {
         Self { 
           current_player: None,
-          display_text: HashMap::new(), 
-          display_prefix: ' ', 
+          field_text: HashMap::new(), 
+          prefix: ' ', 
         }
     }
 }

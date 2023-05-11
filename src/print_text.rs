@@ -37,14 +37,14 @@ fn cutoff(fields: &Vec<Field>, brk: Option<char>, fuzzy: bool, strings: &mut Has
 }
 
 fn append_prefix(b: &mut Builder, data: &Data) {
-  b.append(data.display_prefix);
+  b.append(data.prefix);
   b.append("  ");
 }
 
 fn append_fields(b: &mut Builder, cfg: &Config, data: &Data) {
-  let mut idx = 0; let len = data.display_text.len() as i32;
+  let mut idx = 0; let len = data.field_text.len() as i32;
   for string in &cfg.metadata_fields {
-    if let Some(string) = data.display_text.get(&string.field) {
+    if let Some(string) = data.field_text.get(&string.field) {
       idx += 1;
       b.append(string.clone());
       if idx < len {b.append(format!("{}", cfg.metadata_separator))};
@@ -66,10 +66,10 @@ fn build_string(cfg: &Config, data: &mut Data) -> String {
 }
 
 pub fn print_text(cfg: &Config, data: &mut Data) {
-  if (cfg.hide_output && data.current_player.is_none()) || data.display_text.is_empty() || cfg.metadata_fields.is_empty() {
+  if (cfg.hide_output && data.current_player.is_none()) || data.field_text.is_empty() || cfg.metadata_fields.is_empty() {
     println!("");
   } else {
-    cutoff(&cfg.metadata_fields, cfg.break_character, cfg.fuzzy, &mut data.display_text);
+    cutoff(&cfg.metadata_fields, cfg.break_character, cfg.fuzzy, &mut data.field_text);
     println!("{}", build_string(cfg, data));
   }
 }
