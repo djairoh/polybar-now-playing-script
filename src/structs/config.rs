@@ -58,7 +58,7 @@ impl Rating {
   /// c: character to repeat
   /// n: number of times to repeat the character
   /// 
-  /// output:
+  /// returns:
   /// string of the form '<c> '{n}
   fn repeat(c: char, n: usize) -> String {
     let mut s = c.to_string();
