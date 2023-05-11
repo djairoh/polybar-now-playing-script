@@ -28,10 +28,26 @@ pub struct Rating {
 }
 
 impl Rating {
-  pub fn repeat(c: char, n: usize) -> String {
+  fn repeat(c: char, n: usize) -> String {
     let mut s = c.to_string();
     s.push(' ');
     s.repeat(n)
+  }
+
+  fn build_rating_strings(&self) -> Vec<String> {
+    let mut out = Vec::new();
+    out.push(Self::repeat(self.nil, 5));
+    out.push(format!("{}{}",   Self::repeat(self.half, 1), Self::repeat(self.nil,  4)));
+    out.push(format!("{}{}",   Self::repeat(self.full, 1), Self::repeat(self.nil,  4)));
+    out.push(format!("{}{}{}", Self::repeat(self.full, 1), Self::repeat(self.half, 1), Self::repeat(self.nil, 3)));
+    out.push(format!("{}{}",   Self::repeat(self.full, 2), Self::repeat(self.nil,  3)));
+    out.push(format!("{}{}{}", Self::repeat(self.full, 2), Self::repeat(self.half, 1), Self::repeat(self.nil, 2)));
+    out.push(format!("{}{}",   Self::repeat(self.full, 3), Self::repeat(self.nil,  2)));
+    out.push(format!("{}{}{}", Self::repeat(self.full, 3), Self::repeat(self.half, 1), Self::repeat(self.nil, 1)));
+    out.push(format!("{}{}",   Self::repeat(self.full, 4), Self::repeat(self.nil,  1)));
+    out.push(format!("{}{}",   Self::repeat(self.full, 4), Self::repeat(self.half, 1)));
+    out.push(Self::repeat(self.full, 5));
+   out
   }
 }
 
@@ -84,6 +100,13 @@ impl Config {
     .position(|x| x.eq(&name)) {
         Some(idx) => idx as i32,
         None => i32::MAX,
+    }
+  }
+
+  pub fn build_rating_strings(&self) -> Vec<String> {
+    match self.rating_icons.as_ref() {
+        Some(r) => r.build_rating_strings(),
+        None => Rating::default().build_rating_strings(),
     }
   }
 

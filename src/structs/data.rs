@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use mpris::Player;
 
 pub struct Data {
-  pub current_player: Option<Player>,
+  pub current_player: Option<Player>, 
   pub display_text: HashMap<String, String>,
   pub display_prefix: char,
 }

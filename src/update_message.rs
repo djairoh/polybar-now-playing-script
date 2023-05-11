@@ -1,4 +1,6 @@
+use log::error;
 use mpris::{MetadataValue};
+use string_builder::Builder;
 
 use crate::structs::{config::{Rating, Config}, data::Data};
 
@@ -28,32 +30,15 @@ fn value_to_string(v: &MetadataValue, sep: char) -> String {
   }
 }
 
-fn rating_to_string(r: Option<&MetadataValue>, opt: Option<&Rating>) -> Option<String> {
-  let def = Rating::default();
-  let map: &Rating;
-  match opt {
-    Some(m) => map = m,
-    None => map = &def,
-  }
-
+fn rating_to_string(r: Option<&MetadataValue>, str: &Vec<String>) -> Option<String> {
   match r {
     Some(rating) => {
       if let Some(f) = rating.as_f64() {
-        let i = (f * 10_f64).round() as i64;
-        match i { //TODO: refactor this
-          0 => Some(Rating::repeat(map.nil, 5)),
-          1 => Some(format!("{}{}",   Rating::repeat(map.half, 1), Rating::repeat(map.nil,  4))),
-          2 => Some(format!("{}{}",   Rating::repeat(map.full, 1), Rating::repeat(map.nil,  4))),
-          3 => Some(format!("{}{}{}", Rating::repeat(map.full, 1), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 3))),
-          4 => Some(format!("{}{}",   Rating::repeat(map.full, 2), Rating::repeat(map.nil,  3))),
-          5 => Some(format!("{}{}{}", Rating::repeat(map.full, 2), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 2))),
-          6 => Some(format!("{}{}",   Rating::repeat(map.full, 3), Rating::repeat(map.nil,  2))),
-          7 => Some(format!("{}{}{}", Rating::repeat(map.full, 3), Rating::repeat(map.half, 1), Rating::repeat(map.nil, 1))),
-          8 => Some(format!("{}{}",   Rating::repeat(map.full, 4), Rating::repeat(map.nil,  1))),
-          9 => Some(format!("{}{}",   Rating::repeat(map.full, 4), Rating::repeat(map.half, 1))),
-          10.. => Some(Rating::repeat(map.full, 5)),
-          _ =>  Some(format!("Invalid rating!"))
-        }
+        let mut i = (f * 10_f64).round() as i64;
+        if i > 10 {i = 10}
+        if i < 0 {i = 0}
+
+        Some(str[i as usize].clone()) //TODO: still inefficient. would be better to note the idx and load it in print_text 
       } else {
         None
       }
@@ -64,13 +49,13 @@ fn rating_to_string(r: Option<&MetadataValue>, opt: Option<&Rating>) -> Option<S
   }
 }
 
-pub fn update_message(cfg: &Config, data: &mut Data) {
+pub fn update_message(cfg: &Config, data: &mut Data, ratings: &Vec<String>) {
   if let Some(player) = &data.current_player {
     if let Ok(meta) = player.get_metadata() {
       for field in &cfg.metadata_fields {
         let key = field.field.clone();
         if field.field.eq("xesam:userRating") {
-          if let Some(rating_string) = rating_to_string(meta.get(&key), cfg.rating_icons.as_ref()) {
+          if let Some(rating_string) = rating_to_string(meta.get(&key), ratings) {
             data.display_text.insert(key, rating_string);
           } else {
             data.display_text.remove(&key);

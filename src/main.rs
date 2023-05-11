@@ -3,6 +3,7 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
 use clap::Parser;
+use log::error;
 use mpris::PlayerFinder;
 use structs::cli::Cli;
 use structs::{config::Config, data::Data};
@@ -23,9 +24,9 @@ fn handle_signal(data: &Data) {
   }
 }
 
-fn default_loop(pf: &PlayerFinder, cfg: &Config, data: &mut Data) {
+fn default_loop(pf: &PlayerFinder, cfg: &Config, data: &mut Data, r: &Vec<String>) {
   update_players(pf, cfg, data);
-  update_message(cfg, data);
+  update_message(cfg, data, r);
   print_text(cfg, data);
 }
 
@@ -39,6 +40,8 @@ fn main() {
     match confy::load::<Config>("polybar-now-playing", cli.config_file.as_str()) {
       Ok(cfg) => {
         let mut data: Data = Data::default();
+        let rating_strings = cfg.build_rating_strings();
+
         let term = Arc::new(AtomicBool::new(false));
         
         let pf: PlayerFinder = PlayerFinder::new()
@@ -49,11 +52,10 @@ fn main() {
         }
 
         loop {
-          // thread::sleep(cfg.update_delay);
           thread::sleep(time::Duration::from_millis(cfg.update_delay));
           match cli.debug {
             true => print_players(&pf),
-            false => default_loop(&pf, &cfg, &mut data),
+            false => default_loop(&pf, &cfg, &mut data, &rating_strings),
           }
         
           if term.load(Ordering::Relaxed) {
@@ -62,6 +64,9 @@ fn main() {
           };
         }
       },
-    Err(_) => println!("Failed to read config file {}", cli.config_file),
+    Err(e) => {
+      error!("{e}");
+      println!("Failed to read config file {}", cli.config_file);
+    },
   };
 }
