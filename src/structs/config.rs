@@ -59,7 +59,7 @@ impl Rating {
   /// n: number of times to repeat the character
   /// 
   /// returns:
-  /// string of the form '<c> '{n}
+  /// string of the form '\<c\> '{n}
   fn repeat(c: char, n: usize) -> String {
     let mut s = c.to_string();
     s.push(' ');
@@ -126,7 +126,7 @@ pub struct Config {
   /// If None, default values are used ('-', '/', '+').
   pub rating_icons: Option<Rating>,
   /// Vec of Fields. Each field represents one metadata_string to be shown in output, as well as the maximum number of characters for this field.
-  /// Output is shown based on Vec index (vec[0] first, vec[1] second, etc).
+  /// Output is shown based on Vec index (vec\[0\] first, vec\[1\] second, etc).
   pub metadata_fields: Vec<Field>,
   /// Hashmap which maps Player Identities (strings; key) to prefixes (char; value).
   /// If left blank all players will use the default prefix character ('>').
