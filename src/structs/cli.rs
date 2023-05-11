@@ -1,9 +1,10 @@
+//! This file contains structs and functionality that are relevant to the Command Line Interface part of the program.
 use clap::Parser;
 
 /// Program which finds the active mpris player and displays metadata about the playing piece of media.
 /// 
 /// This program is intended to be used with polybar.
-/// as such, most configuration is done through config files.
+/// As such, most configuration is done through config files.
 #[derive(Parser)]
 pub struct Cli { 
   /// The name of the config file to use. 
