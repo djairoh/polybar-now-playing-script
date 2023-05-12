@@ -1,5 +1,6 @@
 //! This file contains all driver code for the program.
 use core::time;
+use std::ffi::OsString;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
@@ -54,15 +55,17 @@ fn default_loop(pf: &PlayerFinder, cfg: &Config, data: &mut Data, r: &Vec<String
 
 /// Main function. Mostly concerned with initialisation.
 fn main() {
+    // Parse cli flags
+    let cli = Cli::parse();
+
     // logging initialisation
-    std::env::set_var("RUST_LOG", "error");
+    std::env::set_var::<&str, OsString>("RUST_LOG", cli.log_level.into());
     if let Err(e) = env_logger::init() {
       error!("{e}");
       return
     }
 
-    // Cli flags, Config, Data, and PlayerFinder initialisation
-    let cli = Cli::parse();
+    // Config, Data, and PlayerFinder initialisation
     match confy::load::<Config>("polybar-now-playing", cli.config_file.as_str()) {
       Ok(cfg) => {
         let mut data: Data = Data::default();
