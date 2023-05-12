@@ -80,8 +80,8 @@ fn append_fields(b: &mut Builder, cfg: &Config, data: &Data) {
   for field in &cfg.metadata_fields {
     if let Some(string) = data.field_text.get(&field.field) {
       idx += 1;
-      b.append(string.clone());
-      if idx < len {b.append(cfg.metadata_separator.clone())};
+      b.append(string.as_str());
+      if idx < len {b.append(cfg.metadata_separator.as_str())};
     } else {
       info!("failed to get {} value!", field.field);
     }

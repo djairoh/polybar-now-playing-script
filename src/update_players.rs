@@ -16,10 +16,10 @@ use crate::structs::{data::Data, config::Config};
 /// name: name of active player, to fetch the appropriate prefix from cfg.
 fn update_prefix(cfg: &Config, data: &mut char, name: &str) {
   if let Some(char) = cfg.player_prefixes.get(name) {
-    *data = char.clone();
+    *data = *char;
     trace!("updated prefix to {}", data);
   } else {
-    *data = cfg.player_prefixes.get("default").unwrap_or(&'>').clone();
+    *data = *cfg.player_prefixes.get("default").unwrap_or(&'>');
     trace!("set prefix to default ({})", data);
   }
 }

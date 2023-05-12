@@ -60,7 +60,7 @@ fn rating_to_string(r: Option<&MetadataValue>, str: &Vec<String>) -> Option<Stri
         if i > 10 {i = 10}
         if i < 0 {i = 0}
 
-        Some(str[i as usize].clone()) //TODO: still inefficient. would be better to note the idx and load it in print_text 
+        Some(str[i as usize].to_owned()) //TODO: still inefficient. would be better to note the idx and load it in print_text 
       } else {
         debug!("failed to convert MetadataValue to f64!");
         None
@@ -85,17 +85,17 @@ pub fn update_message(cfg: &Config, data: &mut Data, ratings: &Vec<String>) {
   if let Some(player) = &data.current_player {
     if let Ok(meta) = player.get_metadata() {
       for field in &cfg.metadata_fields {
-        let key = field.field.clone();
+        let key: &str = field.field.as_ref();
         if field.field.eq("xesam:userRating") {
-          if let Some(rating_string) = rating_to_string(meta.get(&key), ratings) {
-            data.field_text.insert(key, rating_string);
+          if let Some(rating_string) = rating_to_string(meta.get(key), ratings) {
+            data.field_text.insert(key.to_owned(), rating_string);
           } else {
-            data.field_text.remove(&key);
+            data.field_text.remove(key);
           }
         } else {
           match meta.get(&key) {
-            Some(value) => data.field_text.insert(key, value_to_string(value, cfg.array_separator)),
-            None => data.field_text.insert(key, format!("No {}", field.field.clone().trim_start_matches("xesam:"))),
+            Some(value) => data.field_text.insert(key.to_owned(), value_to_string(value, cfg.array_separator)),
+            None => data.field_text.insert(key.to_owned(), format!("No {}", key.trim_start_matches("xesam:"))),
           };
         }
       }
