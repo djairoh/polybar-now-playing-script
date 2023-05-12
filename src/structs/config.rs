@@ -119,9 +119,8 @@ pub struct Config {
   pub array_separator: char,
   /// Character to insert when a string is truncated. None implies no cut off character is inserted and the strings are truncated as is.
   pub break_character: Option<char>,
-  /// Vec of mpris identities, describing what players are considered acceptable.
-  /// Prioritised based on vec index (closer to 0 -> higher priority).
-  pub player_priorities: Vec<String>,
+  /// Hashmap of mpris identities, describing what players are considered acceptable.
+  pub player_priorities: HashMap<String, u8>,
   /// Characters to use for the xesam:userRating field. 
   /// If None, default values are used ('-', '/', '+').
   pub rating_icons: Option<Rating>,
@@ -159,6 +158,9 @@ impl Config {
   /// 
   /// TODO: using a HashMap would be more efficient i think.
   pub fn find_player_priorities_idx(&self, name: &str) -> u8 {
+    match self.player_priorities.get(name) {
+        Some(val) => *val,
+        None => u8::MAX,
     }
   }
 
@@ -172,15 +174,17 @@ impl Config {
 
   /// This function returns the default player_priorities, used when a non-existent config file is requested.
   /// The values of these are based on nothing but my own experience; in fact I'm not even sure if the Spotify app's identity is correct.
-  fn default_player_priorities() -> Vec<String> {
-    vec![
-      "Clementine".to_owned(),
-      "Spotify".to_owned(),
-      "mpv".to_owned(),
-      "VLC Media Player".to_owned(),
-      "Firefox".to_owned(),
-      "Chromium".to_owned()
-    ]
+  fn default_player_priorities() -> HashMap< String, u8> {
+    let mut out = HashMap::new();
+
+    out.insert("Clementine".to_owned(), 1);
+    out.insert("Spotify".to_owned(), 2);
+    out.insert("mpv".to_owned(), 3);
+    out.insert("VLC Media Player".to_owned(), 4);
+    out.insert("Firefox".to_owned(), 5);
+    out.insert("Chromium".to_owned(), 6);
+    
+    out
   }
 
   /// This function returns the default metadata fields, used when a non-existent config file is requested.
