@@ -158,11 +158,7 @@ impl Config {
   /// If the given identity is not in the map, the value of i32::MAX is returned instead.
   /// 
   /// TODO: using a HashMap would be more efficient i think.
-  pub fn find_player_priorities_idx(&self, name: &str) -> i32 {
-    match self.player_priorities.iter()
-    .position(|x| x.eq(&name)) {
-        Some(idx) => idx as i32,
-        None => i32::MAX,
+  pub fn find_player_priorities_idx(&self, name: &str) -> u8 {
     }
   }
 

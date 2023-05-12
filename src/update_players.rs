@@ -38,7 +38,7 @@ pub fn update_players(pf: &PlayerFinder, cfg: &Config, mut data: &mut Data) {
   if players.is_empty() {
     data.current_player = None;
   } else {
-    let mut active: BTreeMap<i32, Player> = BTreeMap::new();
+    let mut active: BTreeMap<u8, Player> = BTreeMap::new();
     for player in players {
       if let Ok(mpris::PlaybackStatus::Playing) = player.get_playback_status() {
         let idx = cfg.find_player_priorities_idx(player.identity());
