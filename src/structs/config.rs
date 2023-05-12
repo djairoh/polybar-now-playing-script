@@ -155,8 +155,6 @@ impl Default for Config {
 impl Config {
   /// This function returns the index of a given player identity in the player_priorities hashmap.
   /// If the given identity is not in the map, the value of i32::MAX is returned instead.
-  /// 
-  /// TODO: using a HashMap would be more efficient i think.
   pub fn find_player_priorities_idx(&self, name: &str) -> u8 {
     match self.player_priorities.get(name) {
         Some(val) => *val,
