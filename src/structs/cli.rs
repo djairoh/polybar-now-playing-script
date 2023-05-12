@@ -10,9 +10,9 @@ pub struct Cli {
   /// The name of the config file to use. 
   #[arg(short = 'c', long = "config", default_value = "default")]
   pub config_file: String,
-  /// Enable debug mode.
+  /// Enable list mode.
   /// 
   /// This mode prints all active players to stdout, to allow one to find the appropriate player names to use in the config files.
-  #[arg(short = 'd', long = "debug")]
-  pub debug: bool,
+  #[arg(short = 'l', long = "list")]
+  pub list: bool,
 }

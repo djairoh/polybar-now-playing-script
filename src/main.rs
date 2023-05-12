@@ -87,7 +87,7 @@ fn main() {
         // main body loop
         loop {
           thread::sleep(time::Duration::from_millis(cfg.update_delay));
-          match cli.debug {
+          match cli.list {
             true => print_players(&pf),
             false => default_loop(&pf, &cfg, &mut data, &rating_strings),
           }
