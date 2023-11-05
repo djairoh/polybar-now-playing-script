@@ -1,14 +1,17 @@
 //! This file contains structs and functions concerning themselves with the configuration of the program.
-use std::{collections::HashMap};
+use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
 
 /// This struct represents one metadata field to be rendered, as well as the maximum length of its' output.
+/// There is also support for custom formatting.
 #[derive(Serialize, Deserialize)]
 pub struct Field {
   /// The name of the metadata field.
   pub field: String,
   /// The maximum length of the metadata field's output.
-  pub num_chars: u8
+  pub num_chars: u32,
+  /// Formatting to apply. (the value "{}" is substituted with the actual string)
+  pub format: String
 }
 
 impl Field {
@@ -16,13 +19,15 @@ impl Field {
   /// input:
   /// field: name of the field
   /// num_chars: maximum length of the field
+  ///  format: what formatting to apply to the field
   /// 
   /// returns:
   /// a new Field with the given parameters.
-  fn new(field: String, num_chars: u8) -> Self {
+  fn new(field: String, num_chars: u32, format: String) -> Self {
     Field {
       field,
-      num_chars
+      num_chars,
+      format
     }
   }
 
@@ -30,11 +35,16 @@ impl Field {
   /// input:
   /// field: name of the field
   /// num_chars: maximum length of the field
+  /// format: (optional), formatting to apply.
   /// 
   /// returns:
   /// a new Field with the given parameters.
-  pub fn constructor(field: &str, num_chars: u8) -> Self {
-    Self::new(field.to_owned(), num_chars)
+  pub fn constructor(field: &str, num_chars: u32, format: Option<String>) -> Self {
+    if let Some(format) = format {
+      Self::new(field.to_owned(), num_chars, format)
+    } else {
+      Self::new(field.to_owned(), num_chars, "{}".to_owned())
+    }
   }
 }
 
@@ -189,8 +199,8 @@ impl Config {
   /// It contains the "title" and "artist" fields, with 40 and 20 maximum characters respectively.
   fn default_metadata_fields() -> Vec<Field> {
     vec![
-      Field::constructor("xesam:title", 40),
-      Field::constructor("xesam:artist", 20)
+      Field::constructor("xesam:title", 40, None),
+      Field::constructor("xesam:artist", 20, None)
     ]
   }
 

@@ -18,3 +18,4 @@ log = "0.4"
 signal-hook = "0.3.*"
 toml = "0.5.*"
 clap = { version = "4.2.*", features = ["derive"] }
+dyn-fmt = "0.4.0"

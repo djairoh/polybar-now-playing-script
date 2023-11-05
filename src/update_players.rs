@@ -32,7 +32,7 @@ fn update_prefix(cfg: &Config, data: &mut char, name: &str) {
 /// pf: PlayerFinder instance of the program.
 /// cfg: Config struct of the program, containing the list of acceptable players.
 /// data: mutable Data struct of the program, containing a marker for the currently active player.
-pub fn update_players(pf: &PlayerFinder, cfg: &Config, mut data: &mut Data) {
+pub fn update_players(pf: &PlayerFinder, cfg: &Config, data: &mut Data) {
   // get all acceptable players
   let players = pf.find_all().unwrap_or(Vec::new());
   if players.is_empty() {

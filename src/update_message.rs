@@ -1,6 +1,6 @@
 //! This file deals with updating the actual message, including proper formatting. 
 use log::{debug, trace};
-use mpris::{MetadataValue};
+use mpris::MetadataValue;
 
 use crate::structs::{config::Config, data::Data};
 

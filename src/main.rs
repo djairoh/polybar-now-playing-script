@@ -21,7 +21,7 @@ mod structs;
 mod print_players;
 
 /// This function deals with an incoming (USR1) signal.
-/// It is hard-coded to play/payse the active player.
+/// It is hard-coded to play/pause the active player.
 /// 
 /// input:
 /// data: Data struct for active configuration.

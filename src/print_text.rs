@@ -2,6 +2,7 @@
 use std::collections::HashMap;
 use log::{info, error};
 use string_builder::Builder;
+use dyn_fmt::AsStrFormatExt;
 
 use crate::structs::{config::{Field, Config}, data::Data};
 
@@ -34,7 +35,7 @@ fn get_char_boundary(str: &str, max_len: usize) -> usize {
   }
 }
 
-/// This function applies truncation to each strings in the given hashmap, as dictated by the values in the given Fields.
+/// This function applies truncation to each string in the given hashmap, as dictated by the values in the given Fields.
 /// It also applies fuzzy cutoff if the configuration option for this is enabled.
 /// 
 /// Input:
@@ -80,7 +81,7 @@ fn append_fields(b: &mut Builder, cfg: &Config, data: &Data) {
   for field in &cfg.metadata_fields {
     if let Some(string) = data.field_text.get(&field.field) {
       idx += 1;
-      b.append(string.as_str());
+      b.append(field.format.format(&[string.as_str()]));
       if idx < len {b.append(cfg.metadata_separator.as_str())};
     } else {
       info!("failed to get {} value!", field.field);
