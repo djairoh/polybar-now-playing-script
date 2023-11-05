@@ -168,15 +168,19 @@ full = '+'
 #   [[metadata_fields]]
 #   field = '<name of field>'
 #   num_chars = <maximum number of characters>
-# See https://www.freedesktop.org/wiki/Specifications/mpris-spec/metadata/ for available fields.
+#   format = <string containing '{}' to apply formatting>
+# if no extra formatting is desired, use a string of '{}'.
+# See https://www.freedesktop.org/wiki/Specifications/mpris-spec/metadata/ for available names.
 # string, u8 (0 <= u8 <= 255)
 [[metadata_fields]]
 field = 'xesam:title'
 num_chars = 40
+format = '{}'
 
 [[metadata_fields]]
 field = 'xesam:artist'
 num_chars = 20
+format = '{}'
 
 
 # The prefixes to use with various players. Each entry is keyed by the Mpris identity.
@@ -210,12 +214,12 @@ Whenever a config file is specified that does not actually exist, the script cre
   break_character = '-'
 
   [player_priorities]
-  mpv = 3
-  Firefox = 5
-  Chromium = 6
   Clementine = 1
   Spotify = 2
+  mpv = 3
   "VLC Media Player" = 4
+  Firefox = 5
+  Chromium = 6
 
   [rating_icons]
   nil = '-'
@@ -225,18 +229,20 @@ Whenever a config file is specified that does not actually exist, the script cre
   [[metadata_fields]]
   field = 'xesam:title'
   num_chars = 40
+  format = '{}'
 
   [[metadata_fields]]
   field = 'xesam:artist'
   num_chars = 20
+  format = '{}'
 
   [player_prefixes]
+  Clementine = 'c'
+  chromium = 'g'
+  default = '>'
   Firefox = 'f'
   mpv = 'm'
   Spotify = 's'
-  chromium = 'g'
-  Clementine = 'c'
-  default = '>'
   "VLC Media Player" = 'v'
   ```
 </details>
