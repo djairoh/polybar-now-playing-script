@@ -126,6 +126,9 @@ fuzzy = false
 # whether to display the prefix characters in the output string at all
 # boolean
 render_prefix = true
+# whether to escape special characters like '&' to '&amp;'
+# boolean
+escape_chars = false
 
 # time taken between updates of the output string, in milliseconds
 # u64 (0 <= u64 <= 18446744073709551615)
@@ -208,6 +211,7 @@ Whenever a config file is specified that does not actually exist, the script cre
   hide_output = true
   fuzzy = false
   render_prefix = true
+  escape_chars = false
   update_delay = 300
   metadata_separator = ' | '
   array_separator = '+'

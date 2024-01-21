@@ -81,7 +81,18 @@ fn append_fields(b: &mut Builder, cfg: &Config, data: &Data) {
   for field in &cfg.metadata_fields {
     if let Some(string) = data.field_text.get(&field.field) {
       idx += 1;
-      b.append(field.format.format(&[string.as_str()]));
+
+      if cfg.escape_chars {
+        let s: &String = &string.chars()
+          .map(|x| match x {
+            '&' => "&amp;".to_owned(),
+            _ => x.to_string(),
+          }).collect();
+
+        b.append(field.format.format(&[s.as_str()]));
+      } else {
+        b.append(field.format.format(&[string.as_str()]));
+      }
       if idx < len {b.append(cfg.metadata_separator.as_str())};
     } else {
       info!("failed to get {} value!", field.field);

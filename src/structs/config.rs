@@ -140,6 +140,10 @@ pub struct Config {
   /// Hashmap which maps Player Identities (strings; key) to prefixes (char; value).
   /// If left blank all players will use the default prefix character ('>').
   pub player_prefixes: HashMap<String, char>,
+  /// Boolean which tells the program to escape special characters or not.
+  /// This is useful for some bar implementations (i.e. waybar needs to escape the '&' character).
+  /// Currently only escapes '&', i will be adding more as i run into them.
+  pub escape_chars: bool,
 }
 
 /// Defaults for the Config struct.
@@ -158,6 +162,7 @@ impl Default for Config {
         rating_icons: Some(Rating::default()),
         metadata_fields: Config::default_metadata_fields(),
         player_prefixes: Config::default_player_prefixes(),
+        escape_chars: false,
       }
   }
 }
