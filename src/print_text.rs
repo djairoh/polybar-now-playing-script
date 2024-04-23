@@ -72,7 +72,7 @@ fn cutoff(
 /// b: mutable String builder to append to.
 /// data: Data struct containing the current prefix character.
 fn append_prefix(b: &mut Builder, data: &Data) {
-    b.append(data.prefix);
+    b.append(data.prefix.to_owned());
     b.append("  ");
 }
 

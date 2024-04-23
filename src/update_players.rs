@@ -13,13 +13,13 @@ use mpris::PlayerFinder;
 /// cfg: Config struct for the program, containing the hashmap of prefixes.
 /// data: mutable char containing the active prefix.
 /// name: name of active player, to fetch the appropriate prefix from cfg.
-fn update_prefix(cfg: &Config, data: &mut char, name: &str) {
+fn update_prefix(cfg: &Config, data: &mut Data, name: &str) {
     if let Some(char) = cfg.player_prefixes.get(name) {
-        *data = *char;
-        trace!("updated prefix to {}", data);
+        data.prefix = char.to_owned();
+        trace!("updated prefix to {}", data.prefix);
     } else {
-        *data = *cfg.player_prefixes.get("default").unwrap_or(&'>');
-        trace!("set prefix to default ({})", data);
+        data.prefix = cfg.player_prefixes.get("default").unwrap().to_owned();
+        trace!("set prefix to default ({})", data.prefix);
     }
 }
 
@@ -38,14 +38,14 @@ pub fn update_players(pf: &PlayerFinder, cfg: &Config, data: &mut Data) {
         data.current_player = None;
         debug!("update_players: no players found!")
     } else {
-        let mut trees = vec![BTreeMap::new(), BTreeMap::new(), BTreeMap::new()];
+        let mut trees = vec![BTreeMap::new(), BTreeMap::new()];
         for player in players {
             if let Ok(status) = player.get_playback_status() {
                 let idx = cfg.find_player_priorities_idx(player.identity());
                 match status {
                     mpris::PlaybackStatus::Playing => trees[0].insert(idx, player),
-                    mpris::PlaybackStatus::Paused => trees[1].insert(idx, player),
-                    mpris::PlaybackStatus::Stopped => trees[2].insert(idx, player),
+                    mpris::PlaybackStatus::Paused => trees[0].insert(idx, player),
+                    mpris::PlaybackStatus::Stopped => trees[1].insert(idx, player),
                 };
             }
         }
@@ -53,7 +53,7 @@ pub fn update_players(pf: &PlayerFinder, cfg: &Config, data: &mut Data) {
         // select the player with the highest priority.
         for mut tree in trees {
             if let Some((_, player)) = tree.pop_first() {
-                update_prefix(cfg, &mut data.prefix, player.identity());
+                update_prefix(cfg, data, player.identity());
                 debug!("update_players: updated player to {}!", player.identity());
                 data.current_player = Some(player);
                 break;

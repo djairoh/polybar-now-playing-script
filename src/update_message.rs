@@ -114,6 +114,10 @@ pub fn update_message(cfg: &Config, data: &mut Data, ratings: &Vec<String>) {
                         }
                         None => {
                             trace!("update_messages: field {} has no value!", key);
+                            if field.field.eq("bs:isFavorite") {
+                                data.field_text.remove(key);
+                                continue;
+                            }
                             data.field_text.insert(
                                 key.to_owned(),
                                 format!("No {}", key.trim_start_matches("xesam:")),
